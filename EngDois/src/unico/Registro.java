@@ -11,7 +11,7 @@ public class Registro {
 	public String placa;
 	public String marca;
 	public String modelo;
-	public Calendar entrada;
-	public Calendar saida;
+	public Date entrada;
+	public Date saida;
 
 }
