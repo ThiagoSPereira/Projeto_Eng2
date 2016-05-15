@@ -3,6 +3,7 @@ package unico;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -15,15 +16,23 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 public class Tela implements ActionListener {
 
 	Registro[] reg = new Registro[12];
 	String listData[] = { "Vaga 1", "Vaga 2", "Vaga 3", "Vaga 4", "Vaga 5", "Vaga 6", "Vaga 7", "Vaga 8", "Vaga 9",
 			"Vaga 10", "Vaga 11", "Vaga 12" };
+	String vagasDiponiveis;
 	JList vagas;
+	
+	JList historico;
+    ArrayList<String> shistorico;
+	String valorFinal;
 	JButton registrar;
 	JButton pagar;
+	JButton preco;
+	JButton consulta;
 	JTextField jNome;
 	JTextField jRg;
 	JTextField jPlaca;
@@ -33,6 +42,7 @@ public class Tela implements ActionListener {
 	JTextField jSaida;
 	JTextField jReais;
 	JTextField jCentavos;
+	JTextField aPagar;
 	int aux;
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	Calcula calc = new Calcula();
@@ -83,12 +93,21 @@ public class Tela implements ActionListener {
 		});
 
 		registrar = new JButton("Registrar");
-		registrar.setBounds(500, 500, 100, 25);
+		registrar.setBounds(500, 250, 100, 25);
 		registrar.addActionListener(this);
 
 		pagar = new JButton("Pagar");
-		pagar.setBounds(620, 500, 100, 25);
+		pagar.setBounds(620, 250, 100, 25);
 		pagar.addActionListener(this);
+		
+		consulta = new JButton("Vagas Disponiveis");
+		consulta.setBounds(300, 250, 180, 25);
+		consulta.addActionListener(this);
+		
+		preco = new JButton("Alterar");
+		preco.setBounds(560, 6, 100, 25);
+		preco.addActionListener(this);
+
 
 		JLabel labelNome = new JLabel("Nome:");
 		labelNome.setBounds(160, 70, 50, 20);
@@ -127,15 +146,21 @@ public class Tela implements ActionListener {
 		jSaida.setEditable(false);
 		jSaida.setBounds(510, 110, 200, 20);
 		
-		JLabel labelReais = new JLabel("Reais:");
-		labelReais.setBounds(600, 10, 70, 20);
-		jReais = new JTextField();
-		jReais.setBounds(690, 10, 30, 20);
+		JLabel valor = new JLabel("Valor a pagar:");
+		valor.setBounds(440, 150, 150, 20);
+		aPagar = new JTextField();
+		aPagar.setEditable(false);
+		aPagar.setBounds(570, 150, 100, 20);
 		
-		JLabel labelCent = new JLabel("Centavos:");
-		labelCent.setBounds(600, 50, 100, 20);
+		JLabel labelReais = new JLabel("Novo preco:");
+		labelReais.setBounds(400, 10, 120, 20);
+		jReais = new JTextField();
+		jReais.setBounds(490, 10, 30, 20);
+		
+		JLabel labelCent = new JLabel(",");
+		labelCent.setBounds(524, 15, 100, 20);
 		jCentavos = new JTextField();
-		jCentavos.setBounds(690, 50, 20, 20);
+		jCentavos.setBounds(530, 10, 20, 20);
 
 		// adiciona componentes
 		janRegistro.add(vagas);
@@ -155,14 +180,18 @@ public class Tela implements ActionListener {
 		janRegistro.add(labelModelo);
 		janRegistro.add(labelEntrada);
 		janRegistro.add(labelSaida);
+		janRegistro.add(consulta);
+		janRegistro.add(valor);
+		janRegistro.add(aPagar);
 		
 		janHistorico.add(labelReais);
 		janHistorico.add(jReais);
 		janHistorico.add(labelCent);
 		janHistorico.add(jCentavos);
+		janHistorico.add(preco);
 
 		JFrame frame = new JFrame("Estacionamento");
-		frame.setSize(1000, 600);
+		frame.setSize(800, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -187,7 +216,35 @@ public class Tela implements ActionListener {
 			reg[vagas.getSelectedIndex()].saida = new Date();
 			jSaida.setText(sdf.format(reg[vagas.getSelectedIndex()].saida));
 			
-			System.out.println(calc.ValorPagar(reg[vagas.getSelectedIndex()].entrada, reg[vagas.getSelectedIndex()].saida));
+			shistorico.add(jNome.getText());
+			shistorico.add(jRg.getText());
+			shistorico.add(jMarca.getText());
+			shistorico.add(jModelo.getText());
+			shistorico.add(jPlaca.getText());
+			shistorico.add(jEntrada.getText());
+			shistorico.add(jSaida.getText());
+			shistorico.add(aPagar.getText());
+					
+			aPagar.setText(calc.ValorPagar(reg[vagas.getSelectedIndex()].entrada, reg[vagas.getSelectedIndex()].saida));
+			
+		}
+		if (e.getSource().equals(preco)) {
+			calc.Preco(jReais.getText(), jCentavos.getText());
+			
+			System.out.println(calc.preco);
+		}
+
+		if (e.getSource().equals(consulta)) {
+			vagasDiponiveis = "Vagas disponiveis:";
+			int i = 0;
+			for(Registro vaga: reg ){
+				i++;
+				if(vaga == null){
+					
+					vagasDiponiveis += i+"/";
+				}
+			}
+			JOptionPane.showMessageDialog(null, vagasDiponiveis);
 			
 		}
 
