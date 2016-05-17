@@ -1,5 +1,6 @@
 package unico;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -11,10 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
@@ -25,12 +29,15 @@ public class Tela implements ActionListener {
 			"Vaga 10", "Vaga 11", "Vaga 12" };
 	String vagasDiponiveis;
 	JList vagas;
-	
-	JList historico;
-    ArrayList<String> shistorico;
+
+	JTable historico;
+	DefaultTableModel modelo = new DefaultTableModel();
+
+	ArrayList<String> shistorico;
 	String valorFinal;
 	JButton registrar;
 	JButton pagar;
+	JButton pago;
 	JButton preco;
 	JButton consulta;
 	JTextField jNome;
@@ -46,11 +53,14 @@ public class Tela implements ActionListener {
 	int aux;
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	Calcula calc = new Calcula();
+	JScrollPane barraRolagem;
 
 	public void Incio() {
 
 		JTabbedPane tab = new JTabbedPane();
-
+		
+		
+		
 		JPanel janRegistro = new JPanel();
 		JPanel janHistorico = new JPanel();
 		janRegistro.setLayout(null);
@@ -78,7 +88,6 @@ public class Tela implements ActionListener {
 					jModelo.setText(reg[vagas.getSelectedIndex()].modelo.toString());
 					jMarca.setText(reg[vagas.getSelectedIndex()].marca.toString());
 					jEntrada.setText(sdf.format(reg[vagas.getSelectedIndex()].entrada));
-					jSaida.setText(null);
 				} else {
 					jNome.setText(null);
 					jRg.setText(null);
@@ -87,6 +96,7 @@ public class Tela implements ActionListener {
 					jMarca.setText(null);
 					jEntrada.setText(null);
 					jSaida.setText(null);
+					aPagar.setText(null);
 				}
 
 			}
@@ -100,12 +110,16 @@ public class Tela implements ActionListener {
 		pagar.setBounds(620, 250, 100, 25);
 		pagar.addActionListener(this);
 		
+		pago = new JButton("Pago");
+		pago.setBounds(620, 290, 100, 25);
+		pago.addActionListener(this);
+		
 		consulta = new JButton("Vagas Disponiveis");
 		consulta.setBounds(300, 250, 180, 25);
 		consulta.addActionListener(this);
 		
 		preco = new JButton("Alterar");
-		preco.setBounds(560, 6, 100, 25);
+		preco.setBounds(660, 50, 100, 25);
 		preco.addActionListener(this);
 
 
@@ -153,15 +167,37 @@ public class Tela implements ActionListener {
 		aPagar.setBounds(570, 150, 100, 20);
 		
 		JLabel labelReais = new JLabel("Novo preco:");
-		labelReais.setBounds(400, 10, 120, 20);
+		labelReais.setBounds(620, 10, 120, 20);
 		jReais = new JTextField();
-		jReais.setBounds(490, 10, 30, 20);
+		jReais.setBounds(700, 10, 30, 20);
 		
 		JLabel labelCent = new JLabel(",");
-		labelCent.setBounds(524, 15, 100, 20);
+		labelCent.setBounds(733, 15, 100, 20);
 		jCentavos = new JTextField();
-		jCentavos.setBounds(530, 10, 20, 20);
-
+		jCentavos.setBounds(737, 10, 20, 20);
+		
+		//Tabela historico
+		historico = new JTable(modelo);
+		historico.setBounds(20, 10, 550, 300);
+		Registro registro =new Registro();
+	
+		modelo.addColumn("Nome");
+		modelo.addColumn("RG");
+		modelo.addColumn("Marca");
+		modelo.addColumn("Modelo");
+		modelo.addColumn("Placa");
+		modelo.addColumn("Entrada");
+		modelo.addColumn("Saida");
+		modelo.addColumn("Pagar");
+		barraRolagem = new JScrollPane(historico);
+		barraRolagem = new JScrollPane(historico);
+		historico.getColumnModel().getColumn(0).setPreferredWidth(10);
+		historico.getColumnModel().getColumn(1).setPreferredWidth(10);;
+		historico.getColumnModel().getColumn(2).setPreferredWidth(10);;
+		historico.getColumnModel().getColumn(3).setPreferredWidth(10);
+		historico.getColumnModel().getColumn(4).setPreferredWidth(10);
+		
+		
 		// adiciona componentes
 		janRegistro.add(vagas);
 		janRegistro.add(jNome);
@@ -183,12 +219,14 @@ public class Tela implements ActionListener {
 		janRegistro.add(consulta);
 		janRegistro.add(valor);
 		janRegistro.add(aPagar);
+		janRegistro.add(pago);
 		
 		janHistorico.add(labelReais);
 		janHistorico.add(jReais);
 		janHistorico.add(labelCent);
 		janHistorico.add(jCentavos);
 		janHistorico.add(preco);
+		janHistorico.add(historico);
 
 		JFrame frame = new JFrame("Estacionamento");
 		frame.setSize(800, 400);
@@ -215,37 +253,47 @@ public class Tela implements ActionListener {
 		if (e.getSource().equals(pagar)) {
 			reg[vagas.getSelectedIndex()].saida = new Date();
 			jSaida.setText(sdf.format(reg[vagas.getSelectedIndex()].saida));
-			
-			shistorico.add(jNome.getText());
-			shistorico.add(jRg.getText());
-			shistorico.add(jMarca.getText());
-			shistorico.add(jModelo.getText());
-			shistorico.add(jPlaca.getText());
-			shistorico.add(jEntrada.getText());
-			shistorico.add(jSaida.getText());
-			shistorico.add(aPagar.getText());
-					
 			aPagar.setText(calc.ValorPagar(reg[vagas.getSelectedIndex()].entrada, reg[vagas.getSelectedIndex()].saida));
-			
+
+			modelo.addRow(new Object[] { jNome.getText(), jRg.getText(), jMarca.getText(), jModelo.getText(),
+					jPlaca.getText(), jEntrada.getText(), jSaida.getText(), aPagar.getText() });
+
 		}
 		if (e.getSource().equals(preco)) {
 			calc.Preco(jReais.getText(), jCentavos.getText());
-			
+
 			System.out.println(calc.preco);
+		}
+		
+		if (e.getSource().equals(pago)) {
+			reg[vagas.getSelectedIndex()].nome = null;
+			reg[vagas.getSelectedIndex()].rg = null;
+			reg[vagas.getSelectedIndex()].modelo = null;
+			reg[vagas.getSelectedIndex()].marca = null;
+			reg[vagas.getSelectedIndex()].placa = null;
+			reg[vagas.getSelectedIndex()].entrada = null;
+			jNome.setText(null);
+			jRg.setText(null);
+			jPlaca.setText(null);
+			jModelo.setText(null);
+			jMarca.setText(null);
+			jEntrada.setText(null);
+			jSaida.setText(null);
+			aPagar.setText(null);			
 		}
 
 		if (e.getSource().equals(consulta)) {
 			vagasDiponiveis = "Vagas disponiveis:";
 			int i = 0;
-			for(Registro vaga: reg ){
+			for (Registro vaga : reg) {
 				i++;
-				if(vaga == null){
-					
-					vagasDiponiveis += i+"/";
+				if (vaga == null) {
+
+					vagasDiponiveis += i + "/";
 				}
 			}
 			JOptionPane.showMessageDialog(null, vagasDiponiveis);
-			
+
 		}
 
 	}
