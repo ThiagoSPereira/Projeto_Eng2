@@ -266,12 +266,7 @@ public class Tela implements ActionListener {
 		}
 		
 		if (e.getSource().equals(pago)) {
-			reg[vagas.getSelectedIndex()].nome = null;
-			reg[vagas.getSelectedIndex()].rg = null;
-			reg[vagas.getSelectedIndex()].modelo = null;
-			reg[vagas.getSelectedIndex()].marca = null;
-			reg[vagas.getSelectedIndex()].placa = null;
-			reg[vagas.getSelectedIndex()].entrada = null;
+			reg[vagas.getSelectedIndex()] = null;
 			jNome.setText(null);
 			jRg.setText(null);
 			jPlaca.setText(null);
