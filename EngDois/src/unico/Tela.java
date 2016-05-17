@@ -262,7 +262,7 @@ public class Tela implements ActionListener {
 		if (e.getSource().equals(preco)) {
 			calc.Preco(jReais.getText(), jCentavos.getText());
 
-			System.out.println(calc.preco);
+			JOptionPane.showMessageDialog(null, "Preço alterado!");
 		}
 		
 		if (e.getSource().equals(pago)) {
@@ -284,7 +284,7 @@ public class Tela implements ActionListener {
 				i++;
 				if (vaga == null) {
 
-					vagasDiponiveis += i + "/";
+					vagasDiponiveis += " "+i + " /";
 				}
 			}
 			JOptionPane.showMessageDialog(null, vagasDiponiveis);
